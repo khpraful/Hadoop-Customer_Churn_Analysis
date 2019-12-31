@@ -1,0 +1,22 @@
+hive
+----
+create database telco;
+
+create external table customer (customerID string, gender string, senior_citizen int, partner string, dependents string, tenure int, phone_service string, multiple_lines string, internet_service string, online_security string, online_backup string, device_protection string, tech_support string, streaming_tv string, streming_movies string, contract string, paperless string, payment_method string, monthly_charges double, total_charges double, churn string) ROW FORMAT delimited fields terminated by ',' location '/user/<username>/ext_table' tblproperties("skip.header.line.count"="1");
+
+LOAD DATA INPATH 'WA_Fn-UseC_-Telco-Customer-Churn.csv' OVERWRITE INTO TABLE customer;
+
+select gender, avg(total_charges) from customer group by gender;
+
+select payment_method, count(payment_method) as cnt from customer where gender = "Male" group by payment_method order by cnt desc limit 1;
+
+select total_charges from customer where internet_service = "No" and total_charges >= 0 order by total_charges limit 1;
+
+select customerID, 0.2*total_charges as sr_discount from customer where senior_citizen = 1 and dependents = "Yes";
+
+select customerID, tenure from customer where tenure > 20 and paperless = "Yes";
+
+select internet_service, count(internet_service) as cnt from customer where internet_service <> "No" group by internet_service order by cnt desc;
+
+select customerID, 1.095*total_charges from customer where streming_movies = "Yes";
+
